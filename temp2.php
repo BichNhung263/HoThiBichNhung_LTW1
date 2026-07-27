@@ -6,6 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Xin chào Hồ Thị Bích Nung</h1>
+    <h1>Xin chào Hồ Thị Bích Nhung</h1>
 </body>
 </html>
