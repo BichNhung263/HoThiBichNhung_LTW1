@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 
-<>
+<body>
     <?php
     echo "<h1>Câu 1</h1>";
     echo "Họ tên: Hồ Thị Bích Nhung";
@@ -41,14 +41,30 @@
     define("USERNAME", "root");
     define("PASSWORD", "12345");
     echo "HOST :" . HOST . "<br>";
-    echo "DATABASR :" . DATABASE . "<br>";
+    echo "DATABASE :" . DATABASE . "<br>";
     echo "USERNAME :" . USERNAME . "<br>";
-    echo "PASSWORD :" . PASSWORD . "<br>";
+    echo "PASSWORD :" . PASSWORD . "<br>========<br>";
     ?>
 
     <?php
-    
+    echo "<h1>Câu 4</h1>";
+    $name ="Hồ Thị Bích Nhung";
+    echo "Xin chào $name";
+    echo "<br>";
+    echo 'Xin chào $name';
+    echo "<br>===========<br>";
     ?>
+    <?php
+    echo "<h1>Câu 5</h1>";
+    //Đây là comment 1 dòng
+
+    /*
+    Đây là comment 
+    nhiều dòng*/
+
+    echo "Hello PHP";
+    ?>
+    
 </body>
 
 </html>
