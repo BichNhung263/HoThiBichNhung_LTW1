@@ -57,12 +57,29 @@ class Student{
                 return "Yếu";
             }
         }
-        public function GetScholarship(){
+        public function getScholarship(){
             return $this->getAverage() >= 8.0 ? "Có" : "Không ";
+        }
+        public function getRankClass(){
+            switch($this->getRank()){
+                case "Xuất sắc":
+                    return "table-success";
+                case "Giỏi":
+                    return "table-info";
+                case "Khá":
+                    return "table-primary";
+                case "Trung bình":
+                    return "table-warning";
+                case "Yếu":
+                    return "table-danger";
+                default:
+                    return "";
+            }
         }
         public function showInfo():void
         {
-            echo "<tr>
+            $rowClass = $this->getRankClass();
+            echo "<tr class='{$rowClass}'>
             <td>{$this->studentId}</td>
             <td>{$this->fullName}</td>
             <td>{$this->gender}</td>
