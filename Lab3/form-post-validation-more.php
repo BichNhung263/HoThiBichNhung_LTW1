@@ -4,7 +4,7 @@ require "includes/header.php";
 
 <main class="container my-5">
     <section class="mb-5 shadow p-3 mx-auto" style="width: 550px;">
-        <h2>Thông tin sinh viên </h2>
+        <h2>Thông tin sinh viên</h2>
         <form action="form-post-validation-more.php" method="POST" enctype="multipart/form-data">
             <div class="mb-3 mt-3">
                 <label for="fullname">Họ tên</label>
@@ -12,11 +12,11 @@ require "includes/header.php";
             </div>
             <div class="mb-3 mt-3">
                 <label for="birthyear">Tuổi</label>
-                <input type="number" class="form-control" id="birthyear" placeholder="Tuổi" name="birthyear">
+                <input type="text" class="form-control" id="birthyear" placeholder="Tuổi" name="birthyear">
             </div>
             <div class="mb-3 mt-3">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Email" name="email">
+                <input type="text" class="form-control" id="email" placeholder="Email" name="email">
             </div>
             <div class="mb-3 mt-3">
                 <label for="gender">Giới tính:</label>
@@ -82,29 +82,27 @@ require "includes/header.php";
         <?php
         $errors = [];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $fullname = $_POST['fullname'] ?? '';
-            $birthyear = $_POST['birthyear'] ?? '';
-            $email = $_POST['email'] ?? '';
+            $fullname = trim($_POST['fullname'] ?? '');
+            $birthyear = trim($_POST['birthyear'] ?? '');
+            $email = trim($_POST['email'] ?? '');
             $gender = $_POST['gender'] ?? '';
             $mclass = $_POST['mclass'] ?? '';
             $hobbies = $_POST['hobbies'] ?? [];
-            $address = $_POST['address'] ?? '';
+            $address = trim($_POST['address'] ?? '');
             $dob = $_POST['dob'] ?? '';
-            $avatar = $_FILES['avatar']['name'] ?? '';
 
             if (empty($fullname)) {
                 $errors[] = "Họ và tên không được để trống.";
-            } else if (mb_strlen($fullname) < 5) {
-                $errors[] = "Họ và tên phải có ít nhất 05 ký tự.";
+            } else if (strlen($fullname) < 5) {
+                $errors[] = "Họ tên phải có ít nhất 5 ký tự.";
             }
 
-            if ($birthyear === '' || $birthyear === null) {
+            if ($birthyear === '') {
                 $errors[] = "Tuổi không được để trống.";
-            } else if (!is_numeric($birthyear)) {
-                $errors[] = "Tuổi phải là số.";
-            } else if ($birthyear < 18 || $birthyear > 60) {
-                $errors[] = "Tuổi phải nằm trong khoảng từ 18 đến 60.";
+            } else if (!is_numeric($birthyear) || $birthyear < 18 || $birthyear > 60) {
+                $errors[] = "Tuổi phải là số và nằm trong khoảng từ 18 đến 60.";
             }
+
             if (empty($email)) {
                 $errors[] = "Email không được để trống.";
             } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -113,28 +111,34 @@ require "includes/header.php";
             if (empty($gender)) {
                 $errors[] = "Giới tính bắt buộc chọn.";
             }
+
             if (empty($mclass)) {
                 $errors[] = "Lớp bắt buộc chọn.";
             }
 
             if (empty($hobbies)) {
-                $errors[] = "Sở thích phải chọn ít nhất 1 mục.";
+                $errors[] = "Chọn ít nhất một sở thích.";
             }
-
             if (empty($address)) {
                 $errors[] = "Địa chỉ không được để trống.";
             }
-
             if (empty($dob)) {
                 $errors[] = "Ngày sinh không được để trống.";
             }
 
-            if (empty($avatar)) {
+            if (empty($_FILES['avatar']['name'])) {
                 $errors[] = "Ảnh đại diện bắt buộc chọn.";
-            }
+            } else {
+                $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+                $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                if (!in_array($ext, $allowed_exts)) {
+                    $errors[] = "Chỉ chấp nhận các định dạng ảnh: jpg, jpeg, png, gif, webp.";
+                }
 
-            $genderText = ($gender == "1") ? "Nam" : (($gender == "2") ? "Nữ" : "Khác");
-            $mclassText = ($mclass == "C1") ? "Lớp C25A" : (($mclass == "C2") ? "Lớp C25E" : (($mclass == "C3") ? "Lớp C25F" : $mclass));
+                if ($_FILES['avatar']['size'] > 200 * 1024) {
+                    $errors[] = "Kích thước ảnh không được vượt quá 200KB.";
+                }
+            }
 
             if (count($errors) > 0) {
                 ?>
@@ -149,6 +153,10 @@ require "includes/header.php";
                 </div>
                 <?php
             } else {
+                $genderText = ($gender == "1") ? "Nam" : (($gender == "2") ? "Nữ" : "Khác");
+                $mclassText = ($mclass == "C1") ? "Lớp C25A" : (($mclass == "C2") ? "Lớp C25E" : (($mclass == "C3") ? "Lớp C25F" : $mclass));
+                $avatarName = $_FILES['avatar']['name'];
+                $hobbiesStr = implode(", ", $hobbies);
                 ?>
                 <div class="card mt-4">
                     <div class="card-header bg-primary text-white">
@@ -178,7 +186,7 @@ require "includes/header.php";
                             </tr>
                             <tr>
                                 <th>Sở thích</th>
-                                <td><?= htmlspecialchars(implode(", ", $hobbies)) ?></td>
+                                <td><?= htmlspecialchars($hobbiesStr) ?></td>
                             </tr>
                             <tr>
                                 <th>Địa chỉ</th>
@@ -190,7 +198,7 @@ require "includes/header.php";
                             </tr>
                             <tr>
                                 <th>Ảnh đại diện</th>
-                                <td><?= htmlspecialchars($avatar) ?></td>
+                                <td><?= htmlspecialchars($avatarName) ?></td>
                             </tr>
                         </table>
                     </div>
